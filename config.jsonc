@@ -1,0 +1,49 @@
+{
+"$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+    "logo": {
+        "source": "fastfetch.jpg",
+        "type": "kitty",
+        "height": 26,
+        "width": 56,
+        "padding": {
+            "top": 1,
+            "left": 1
+        }
+    },
+
+  "box": {
+    "type": "rounded",
+    "borderColor": "white",
+    "padding": 1
+  },
+  "modules": [
+    { "type": "custom",     "format": "\u001b[0m╭─────────────────────────────────INFO SISTEM────────────────────────────╮" },
+    { "type": "users",        "key": "\u001b[37m│   User\u001b[0m" },
+    { "type": "os",           "key": "\u001b[37m│   OS\u001b[0m" },
+    { "type": "kernel",       "key": "\u001b[37m│   Kernel\u001b[0m" },
+    { "type": "bootmgr",      "key": "\u001b[37m│   Boot Manager\u001b[0m" },
+    { "type": "initsystem",   "key": "\u001b[37m│ 󰑓  Init System\u001b[0m" },
+    { "type": "host",         "key": "\u001b[37m│ 󰌢  Device\u001b[0m" },
+    { "type": "board",        "key": "\u001b[37m│ 󰌢  Board\u001b[0m" },
+    { "type": "bios",         "key": "\u001b[37m│ 󰒓  BIOS\u001b[0m" },
+    { "type": "wm",           "key": "\u001b[37m│   Desktop\u001b[0m" },
+    { "type": "terminal",     "key": "\u001b[37m│   Terminal\u001b[0m" },
+    { "type": "display",      "key": "\u001b[37m│ 󰍹  Display\u001b[0m" },
+    { "type": "theme",        "key": "\u001b[37m│ 󰉼  Theme\u001b[0m" },
+    { "type": "cpu",          "key": "\u001b[37m│   CPU\u001b[0m" },
+    { "type": "cpuusage",     "key": "\u001b[37m│   CPU Usage\u001b[0m" },
+    { "type": "gpu",          "key": "\u001b[37m│   GPU\u001b[0m" },
+    { "type": "vulkan",       "key": "\u001b[37m│ 󰕱  Vulkan\u001b[0m" },
+    { "type": "memory",       "key": "\u001b[37m│ 󰘚  RAM\u001b[0m" },
+    { "type": "swap",         "key": "\u001b[37m│ 󰋊  Swap\u001b[0m" },
+    { "type": "disk",         "key": "\u001b[37m│ 󰋊  Storage\u001b[0m" },
+    { "type": "battery",      "key": "\u001b[37m│ 󰁹  Battery\u001b[0m" },
+    { "type": "dns",          "key": "\u001b[37m│ 󰒍  DNS\u001b[0m" },
+    { "type": "wifi",         "key": "\u001b[37m│ 󰤨  WIFI\u001b[0m" },
+    { "type": "packages",     "key": "\u001b[37m│ 󰏖  Packages\u001b[0m" },
+    { "type": "uptime",       "key": "\u001b[37m│ 󰅐  Uptime\u001b[0m" },
+    { "type": "command",      "key": "\u001b[37m│ 󰔟  OS Age",  "text": "printf \"%s days\" \"$(( ($(date +%s) - $(stat -c %W / 2>/dev/null || stat -c %Y /)) / 86400 ))\""},
+    { "type": "custom",     "format": "\u001b[0m╰───────────────────────────────────────────────────────────────────────╯" }
+  ]
+}
