@@ -7,9 +7,9 @@ Aesthetic boxed Fastfetch config with:
 - Clean rounded box layout
 
 ## Install
-
+```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Lynxz411/lynxz-fastfetch/main/install.sh)"
-
+```
 ## Requirements
 
 - Fastfetch
