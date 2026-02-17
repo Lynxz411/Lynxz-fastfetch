@@ -20,4 +20,6 @@ fi
 cp config/config.jsonc "$TARGET_DIR/"
 cp -r images "$TARGET_DIR/"
 
-echo "Done. Restart terminal."
+echo
+echo "✔ Lynxz Fastfetch installed successfully!"
+echo "Restart your terminal or run: fastfetch"
