@@ -2,7 +2,7 @@
 
 ## Preview
 
-![Preview](images/image.png)
+![Preview](image.png)
 
 
 Aesthetic boxed Fastfetch config with:
