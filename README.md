@@ -1,5 +1,10 @@
 # Lynxz Fastfetch
 
+## Preview
+
+![Preview](images/image.png)
+
+
 Aesthetic boxed Fastfetch config with:
 - Nerd Font icons
 - OS Age counter
