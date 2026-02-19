@@ -22,7 +22,7 @@ git clone https://github.com/Lynxz411/Lynxz-fastfetch.git
 cd Lynxz-fastfetch
 chmod +x install.sh
 ./install.sh
-
+```
 ## Requirements
 
 - Fastfetch
