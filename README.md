@@ -13,7 +13,7 @@ Aesthetic boxed Fastfetch config with:
 
 ## Install
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/Lynxz411/lynxz-fastfetch/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Lynxz411/Lynxz-fastfetch/main/install.sh)"
 ```
 ## Requirements
 
