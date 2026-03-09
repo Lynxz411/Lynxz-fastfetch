@@ -6,7 +6,67 @@ TARGET_DIR="$HOME/.config/fastfetch"
 FONT_DIR="$HOME/.local/share/fonts"
 CONFIG_URL="https://raw.githubusercontent.com/Lynxz411/Lynxz-fastfetch/main/config.jsonc"
 
-echo "⚡ Installing Lynxz Fastfetch..."
+echo "======================================"
+echo "⚡ Installing Fastfetch theme..."
+echo "======================================"
+
+# -----------------------------
+# Detect distro
+# -----------------------------
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    DISTRO=$ID
+else
+    echo "❌ Cannot detect distro"
+    exit 1
+fi
+
+echo "Detected distro: $DISTRO"
+
+# -----------------------------
+# Install dependencies
+# -----------------------------
+install_deps() {
+
+case "$DISTRO" in
+
+arch)
+sudo pacman -Sy --needed curl unzip fontconfig fastfetch
+;;
+
+ubuntu|debian)
+sudo apt update
+sudo apt install -y curl unzip fontconfig fastfetch
+;;
+
+fedora)
+sudo dnf install -y curl unzip fontconfig fastfetch
+;;
+
+*)
+echo "⚠ Unsupported distro. Install fastfetch manually."
+;;
+
+esac
+
+}
+
+# -----------------------------
+# Install fastfetch if missing
+# -----------------------------
+if ! command -v fastfetch &> /dev/null; then
+
+echo "⚠ fastfetch not found. Installing..."
+install_deps
+echo "✔ fastfetch installed"
+
+else
+
+echo "✔ fastfetch already installed"
+
+fi
+
+echo ""
 
 # -----------------------------
 # Detect shell
@@ -63,7 +123,7 @@ else
 fi
 
 # -----------------------------
-# Install JetBrainsMono Nerd Font (Linux only)
+# Install JetBrainsMono Nerd Font 
 # -----------------------------
 if [ ! -d "$FONT_DIR" ]; then
     mkdir -p "$FONT_DIR"
