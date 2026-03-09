@@ -13,10 +13,9 @@ echo "======================================"
 # -----------------------------
 # Detect Distro
 # -----------------------------
-elif [ -f /etc/os-release ]; then
+if [ -f /etc/os-release ]; then
     . /etc/os-release
     DISTRO=$ID
-    IS_TERMUX=false
     echo "Detected distro: $DISTRO"
 else
     echo "❌ Cannot detect Linux distro."
@@ -105,30 +104,29 @@ fi
 # -----------------------------
 # Install JetBrainsMono Nerd Font 
 # -----------------------------
-    if [ ! -d "$FONT_DIR" ]; then
-        mkdir -p "$FONT_DIR"
-    fi
+if [ ! -d "$FONT_DIR" ]; then
+    mkdir -p "$FONT_DIR"
+fi
 
-    if ! fc-list | grep -qi "JetBrainsMono Nerd Font"; then
-        echo "🧠 Installing JetBrainsMono Nerd Font..."
+if ! fc-list | grep -qi "JetBrainsMono Nerd Font"; then
+    echo "🧠 Installing JetBrainsMono Nerd Font..."
 
-        TMP_DIR=$(mktemp -d)
-        cd "$TMP_DIR"
+    TMP_DIR=$(mktemp -d)
+    cd "$TMP_DIR"
 
-        curl -fLo "JetBrainsMono.zip" \
-        https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
+    curl -fLo "JetBrainsMono.zip" \
+    https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
 
-        unzip JetBrainsMono.zip
-        cp *.ttf "$FONT_DIR/"
-        fc-cache -fv
+    unzip JetBrainsMono.zip
+    cp *.ttf "$FONT_DIR/"
+    fc-cache -fv
 
-        cd -
-        rm -rf "$TMP_DIR"
+    cd -
+    rm -rf "$TMP_DIR"
 
-        echo "✔ Font installed."
-    else
-        echo "JetBrainsMono Nerd Font already installed."
-    fi
+    echo "✔ Font installed."
+else
+    echo "JetBrainsMono Nerd Font already installed."
 fi
 
 echo
