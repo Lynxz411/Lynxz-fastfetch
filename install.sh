@@ -11,59 +11,57 @@ echo "⚡ Installing Fastfetch theme..."
 echo "======================================"
 
 # -----------------------------
-# Detect distro
+# Detect Environment & Distro
 # -----------------------------
-if [ -f /etc/os-release ]; then
+# Cek Termux duluan sebelum cek /etc/os-release
+if [[ -n "$PREFIX" && "$PREFIX" == *"/com.termux"* ]]; then
+    DISTRO="termux"
+    IS_TERMUX=true
+    echo "📱 Termux environment detected."
+elif [ -f /etc/os-release ]; then
     . /etc/os-release
     DISTRO=$ID
+    IS_TERMUX=false
+    echo "Detected distro: $DISTRO"
 else
-    echo "❌ Cannot detect distro"
+    echo "❌ Cannot detect Linux distro or Termux."
     exit 1
 fi
-
-echo "Detected distro: $DISTRO"
 
 # -----------------------------
 # Install dependencies
 # -----------------------------
 install_deps() {
-
-case "$DISTRO" in
-
-arch)
-sudo pacman -Sy --needed curl unzip fontconfig fastfetch
-;;
-
-ubuntu|debian)
-sudo apt update
-sudo apt install -y curl unzip fontconfig fastfetch
-;;
-
-fedora)
-sudo dnf install -y curl unzip fontconfig fastfetch
-;;
-
-*)
-echo "⚠ Unsupported distro. Install fastfetch manually."
-;;
-
-esac
-
+    case "$DISTRO" in
+        termux)
+            pkg update -y
+            pkg install -y curl unzip fastfetch
+            ;;
+        arch|cachyos|manjaro)
+            sudo pacman -Sy --needed curl unzip fontconfig fastfetch
+            ;;
+        ubuntu|debian)
+            sudo apt update
+            sudo apt install -y curl unzip fontconfig fastfetch
+            ;;
+        fedora)
+            sudo dnf install -y curl unzip fontconfig fastfetch
+            ;;
+        *)
+            echo "⚠ Unsupported distro. Install fastfetch manually."
+            ;;
+    esac
 }
 
 # -----------------------------
 # Install fastfetch if missing
 # -----------------------------
 if ! command -v fastfetch &> /dev/null; then
-
-echo "⚠ fastfetch not found. Installing..."
-install_deps
-echo "✔ fastfetch installed"
-
+    echo "⚠ fastfetch not found. Installing..."
+    install_deps
+    echo "✔ fastfetch installed"
 else
-
-echo "✔ fastfetch already installed"
-
+    echo "✔ fastfetch already installed"
 fi
 
 echo ""
@@ -86,15 +84,6 @@ else
 fi
 
 echo "Detected shell: $CURRENT_SHELL"
-
-# -----------------------------
-# Check fastfetch
-# -----------------------------
-if ! command -v fastfetch &> /dev/null; then
-    echo "❌ Fastfetch is not installed."
-    echo "Install it first then re-run this script."
-    exit 1
-fi
 
 # -----------------------------
 # Install config
@@ -125,32 +114,49 @@ fi
 # -----------------------------
 # Install JetBrainsMono Nerd Font 
 # -----------------------------
-if [ ! -d "$FONT_DIR" ]; then
-    mkdir -p "$FONT_DIR"
-fi
-
-if ! fc-list | grep -qi "JetBrainsMono Nerd Font"; then
-    echo "🧠 Installing JetBrainsMono Nerd Font..."
-
-    TMP_DIR=$(mktemp -d)
-    cd "$TMP_DIR"
-
-    curl -fLo "JetBrainsMono.zip" \
-    https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
-
-    unzip JetBrainsMono.zip
-    cp *.ttf "$FONT_DIR/"
-    fc-cache -fv
-
-    cd -
-    rm -rf "$TMP_DIR"
-
-    echo "✔ Font installed."
+if [ "$IS_TERMUX" = true ]; then
+    # Instalasi Font khusus Termux
+    if [ ! -f "$HOME/.termux/font.ttf" ]; then
+        echo "🧠 Installing JetBrainsMono Nerd Font for Termux..."
+        mkdir -p "$HOME/.termux"
+        curl -fLo "$HOME/.termux/font.ttf" \
+            "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf"
+        
+        # Reload Termux agar font langsung berubah
+        termux-reload-settings 2>/dev/null || true
+        echo "✔ Font installed for Termux."
+    else
+        echo "JetBrainsMono Nerd Font already installed in Termux."
+    fi
 else
-    echo "JetBrainsMono Nerd Font already installed."
+    # Instalasi Font standar Linux
+    if [ ! -d "$FONT_DIR" ]; then
+        mkdir -p "$FONT_DIR"
+    fi
+
+    if ! fc-list | grep -qi "JetBrainsMono Nerd Font"; then
+        echo "🧠 Installing JetBrainsMono Nerd Font..."
+
+        TMP_DIR=$(mktemp -d)
+        cd "$TMP_DIR"
+
+        curl -fLo "JetBrainsMono.zip" \
+        https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
+
+        unzip JetBrainsMono.zip
+        cp *.ttf "$FONT_DIR/"
+        fc-cache -fv
+
+        cd -
+        rm -rf "$TMP_DIR"
+
+        echo "✔ Font installed."
+    else
+        echo "JetBrainsMono Nerd Font already installed."
+    fi
 fi
 
 echo
-echo "Fastfetch theme installed successfully!"
+echo "🎉 Fastfetch theme installed successfully!"
 echo "💡 Note: Don't forget to edit ~/.config/fastfetch/config.jsonc to set your own profile picture!"
 echo "Restart terminal or run: source $RC_FILE"
