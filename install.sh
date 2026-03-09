@@ -11,20 +11,15 @@ echo "⚡ Installing Fastfetch theme..."
 echo "======================================"
 
 # -----------------------------
-# Detect Environment & Distro
+# Detect Distro
 # -----------------------------
-# Cek Termux duluan sebelum cek /etc/os-release
-if [[ -n "$PREFIX" && "$PREFIX" == *"/com.termux"* ]]; then
-    DISTRO="termux"
-    IS_TERMUX=true
-    echo "📱 Termux environment detected."
 elif [ -f /etc/os-release ]; then
     . /etc/os-release
     DISTRO=$ID
     IS_TERMUX=false
     echo "Detected distro: $DISTRO"
 else
-    echo "❌ Cannot detect Linux distro or Termux."
+    echo "❌ Cannot detect Linux distro."
     exit 1
 fi
 
@@ -33,10 +28,6 @@ fi
 # -----------------------------
 install_deps() {
     case "$DISTRO" in
-        termux)
-            pkg update -y
-            pkg install -y curl unzip fastfetch
-            ;;
         arch|cachyos|manjaro)
             sudo pacman -Sy --needed curl unzip fontconfig fastfetch
             ;;
@@ -114,22 +105,6 @@ fi
 # -----------------------------
 # Install JetBrainsMono Nerd Font 
 # -----------------------------
-if [ "$IS_TERMUX" = true ]; then
-    # Instalasi Font khusus Termux
-    if [ ! -f "$HOME/.termux/font.ttf" ]; then
-        echo "🧠 Installing JetBrainsMono Nerd Font for Termux..."
-        mkdir -p "$HOME/.termux"
-        curl -fLo "$HOME/.termux/font.ttf" \
-            "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf"
-        
-        # Reload Termux agar font langsung berubah
-        termux-reload-settings 2>/dev/null || true
-        echo "✔ Font installed for Termux."
-    else
-        echo "JetBrainsMono Nerd Font already installed in Termux."
-    fi
-else
-    # Instalasi Font standar Linux
     if [ ! -d "$FONT_DIR" ]; then
         mkdir -p "$FONT_DIR"
     fi
