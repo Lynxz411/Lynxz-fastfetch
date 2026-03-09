@@ -23,6 +23,14 @@ cd Lynxz-fastfetch
 chmod +x install.sh
 ./install.sh
 ```
+
+## For uninstall
+```bash
+cd Lynxz-fastfetch
+chmod +x uninstall.sh
+./uninstall.sh
+```
+
 ## Requirements
 
 - Fastfetch
