@@ -2,10 +2,9 @@
 
 set -e
 
-REPO_URL="https://github.com/Lynxz411/lynxz-fastfetch.git"
 TARGET_DIR="$HOME/.config/fastfetch"
 FONT_DIR="$HOME/.local/share/fonts"
-FONT_NAME="JetBrainsMono Nerd Font"
+CONFIG_URL="https://raw.githubusercontent.com/Lynxz411/Lynxz-fastfetch/main/config.jsonc"
 
 echo "⚡ Installing Lynxz Fastfetch..."
 
@@ -20,7 +19,6 @@ elif [ "$CURRENT_SHELL" = "zsh" ]; then
     RC_FILE="$HOME/.zshrc"
 elif [ "$CURRENT_SHELL" = "fish" ]; then
     RC_FILE="$HOME/.config/fish/config.fish"
-    # Pastikan folder config fish sudah ada
     mkdir -p "$HOME/.config/fish"
 else
     echo "Unsupported shell: $CURRENT_SHELL"
@@ -33,8 +31,8 @@ echo "Detected shell: $CURRENT_SHELL"
 # Check fastfetch
 # -----------------------------
 if ! command -v fastfetch &> /dev/null; then
-    echo "❌ Fastfetch is not installed"
-    echo "Install it first then re-run this script, type sudo pacman -S fastfetch and press enter"
+    echo "❌ Fastfetch is not installed."
+    echo "Install it first then re-run this script."
     exit 1
 fi
 
@@ -47,16 +45,14 @@ if [ -f "$TARGET_DIR/config.jsonc" ]; then
     mv "$TARGET_DIR/config.jsonc" "$TARGET_DIR/config.jsonc.bak.$(date +%s)"
 fi
 
-# Pastikan folder config dan images ada sebelum dicopy
-[ -d "config" ] && cp config/config.jsonc "$TARGET_DIR/" || echo "Warning: config/config.jsonc not found."
-[ -d "images" ] && cp -r images "$TARGET_DIR/"
+echo "Downloading config.jsonc from GitHub..."
+curl -fsSL "$CONFIG_URL" -o "$TARGET_DIR/config.jsonc"
 
 echo "✔ Config installed."
 
 # -----------------------------
 # Inject fastfetch to shell rc
 # -----------------------------
-# Tambahkan 2>/dev/null untuk mencegah error jika file RC belum ada
 if ! grep -q "fastfetch" "$RC_FILE" 2>/dev/null; then
     echo "" >> "$RC_FILE"
     echo "# Lynxz Fastfetch" >> "$RC_FILE"
@@ -67,7 +63,7 @@ else
 fi
 
 # -----------------------------
-# Install JetBrainsMono Nerd Font
+# Install JetBrainsMono Nerd Font (Linux only)
 # -----------------------------
 if [ ! -d "$FONT_DIR" ]; then
     mkdir -p "$FONT_DIR"
@@ -96,6 +92,5 @@ fi
 
 echo
 echo "Fastfetch theme installed successfully!"
-echo "If you wanna change system information you can edit the file ~/.config/fastfetch/config.jsonc"
-echo "Btw if you don't know how to set picture you can edit "source": "fastfetch.jpg" to your photo (only 1:1 photo)"
+echo "💡 Note: Don't forget to edit ~/.config/fastfetch/config.jsonc to set your own profile picture!"
 echo "Restart terminal or run: source $RC_FILE"
