@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -e
 
@@ -61,19 +61,54 @@ echo ""
 # -----------------------------
 CURRENT_SHELL=$(basename "$SHELL")
 
-if [ "$CURRENT_SHELL" = "bash" ]; then
-    RC_FILE="$HOME/.bashrc"
-elif [ "$CURRENT_SHELL" = "zsh" ]; then
-    RC_FILE="$HOME/.zshrc"
-elif [ "$CURRENT_SHELL" = "fish" ]; then
-    RC_FILE="$HOME/.config/fish/config.fish"
-    mkdir -p "$HOME/.config/fish"
-else
-    echo "Unsupported shell: $CURRENT_SHELL"
-    exit 1
+# Fallback to bash if shell detection fails
+if [ -z "$CURRENT_SHELL" ]; then
+    CURRENT_SHELL="bash"
 fi
 
-echo "Detected shell: $CURRENT_SHELL"
+case "$CURRENT_SHELL" in
+    bash)
+        RC_FILE="$HOME/.bashrc"
+        ;;
+    zsh)
+        RC_FILE="$HOME/.zshrc"
+        ;;
+    fish)
+        RC_FILE="$HOME/.config/fish/config.fish"
+        mkdir -p "$HOME/.config/fish"
+        ;;
+    *)
+        echo "⚠ Unsupported shell: $CURRENT_SHELL"
+        echo "📝 Please specify your shell (bash/zsh/fish):"
+        read -r SHELL_CHOICE
+        case "$SHELL_CHOICE" in
+            bash)
+                RC_FILE="$HOME/.bashrc"
+                CURRENT_SHELL="bash"
+                ;;
+            zsh)
+                RC_FILE="$HOME/.zshrc"
+                CURRENT_SHELL="zsh"
+                ;;
+            fish)
+                RC_FILE="$HOME/.config/fish/config.fish"
+                mkdir -p "$HOME/.config/fish"
+                CURRENT_SHELL="fish"
+                ;;
+            *)
+                echo "❌ Invalid shell choice. Exiting."
+                exit 1
+                ;;
+        esac
+        ;;
+esac
+
+echo "✔ Detected shell: $CURRENT_SHELL"
+
+# Ensure RC file exists
+if [ ! -f "$RC_FILE" ]; then
+    touch "$RC_FILE"
+fi
 
 # -----------------------------
 # Install config
@@ -98,7 +133,7 @@ if ! grep -q "fastfetch" "$RC_FILE" 2>/dev/null; then
     echo "fastfetch" >> "$RC_FILE"
     echo "✔ fastfetch added to $RC_FILE"
 else
-    echo "fastfetch already in $RC_FILE"
+    echo "✔ fastfetch already in $RC_FILE"
 fi
 
 # -----------------------------
@@ -108,25 +143,25 @@ if [ ! -d "$FONT_DIR" ]; then
     mkdir -p "$FONT_DIR"
 fi
 
-if ! fc-list | grep -qi "JetBrainsMono Nerd Font"; then
+if ! fc-list 2>/dev/null | grep -qi "JetBrainsMono Nerd Font"; then
     echo "🧠 Installing JetBrainsMono Nerd Font..."
 
     TMP_DIR=$(mktemp -d)
-    cd "$TMP_DIR"
+    cd "$TMP_DIR" || exit 1
 
     curl -fLo "JetBrainsMono.zip" \
     https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
 
-    unzip JetBrainsMono.zip
-    cp *.ttf "$FONT_DIR/"
-    fc-cache -fv
+    unzip -q JetBrainsMono.zip
+    cp *.ttf "$FONT_DIR/" 2>/dev/null || true
+    fc-cache -fv > /dev/null 2>&1 || true
 
-    cd -
+    cd - > /dev/null || exit 1
     rm -rf "$TMP_DIR"
 
     echo "✔ Font installed."
 else
-    echo "JetBrainsMono Nerd Font already installed."
+    echo "✔ JetBrainsMono Nerd Font already installed."
 fi
 
 echo
