@@ -5,6 +5,7 @@ set -e
 TARGET_DIR="$HOME/.config/fastfetch"
 FONT_DIR="$HOME/.local/share/fonts"
 CONFIG_URL="https://raw.githubusercontent.com/Lynxz411/Lynxz-fastfetch/main/config.jsonc"
+REPO_RAW_BASE="https://raw.githubusercontent.com/Lynxz411/Lynxz-fastfetch/main"
 
 echo "======================================"
 echo "⚡ Installing Fastfetch theme..."
@@ -135,6 +136,63 @@ if ! grep -q "fastfetch" "$RC_FILE" 2>/dev/null; then
 else
     echo "✔ fastfetch already in $RC_FILE"
 fi
+
+echo ""
+
+# -----------------------------
+# Configure Fish Shell (if using Fish)
+# -----------------------------
+if [ "$CURRENT_SHELL" = "fish" ]; then
+    echo "🐠 Configuring Fish shell..."
+    
+    FISH_CONFIG="$HOME/.config/fish/config.fish"
+    mkdir -p "$HOME/.config/fish"
+    touch "$FISH_CONFIG"
+    
+    # Backup existing config if present
+    if [ -s "$FISH_CONFIG" ]; then
+        echo "💾 Backing up existing Fish config..."
+        cp "$FISH_CONFIG" "$FISH_CONFIG.bak.$(date +%s)"
+    fi
+    
+    # Download and apply config.fish
+    echo "🔧 Setting up Fish configuration..."
+    curl -fsSL "$REPO_RAW_BASE/config.fish" -o "$FISH_CONFIG"
+    
+    # Replace placeholder user path with actual user (if needed)
+    sed -i "s|/home/lynxz|$HOME|g" "$FISH_CONFIG"
+    
+    echo "✔ Fish config installed to $FISH_CONFIG"
+    echo ""
+fi
+
+# -----------------------------
+# Configure Kitty Terminal (if installed)
+# -----------------------------
+KITTY_CONFIG="$HOME/.config/kitty/kitty.conf"
+
+if command -v kitty &> /dev/null; then
+    echo "🐱 Configuring Kitty terminal..."
+    
+    mkdir -p "$HOME/.config/kitty"
+    
+    # Backup existing config if present
+    if [ -f "$KITTY_CONFIG" ]; then
+        echo "💾 Backing up existing Kitty config..."
+        cp "$KITTY_CONFIG" "$KITTY_CONFIG.bak.$(date +%s)"
+    fi
+    
+    # Download and apply kitty.conf
+    echo "🔧 Setting up Kitty configuration..."
+    curl -fsSL "$REPO_RAW_BASE/kitty.conf" -o "$KITTY_CONFIG"
+    
+    echo "✔ Kitty config installed to $KITTY_CONFIG"
+    echo ""
+else
+    echo "ℹ️  Kitty not detected (optional)."
+fi
+
+echo ""
 
 # -----------------------------
 # Install JetBrainsMono Nerd Font 
