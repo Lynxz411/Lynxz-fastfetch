@@ -86,13 +86,40 @@ if [ -f "$RC_FILE" ]; then
         sed -i '/# Lynxz Fastfetch/d' "$RC_FILE"
         sed -i '/^fastfetch$/d' "$RC_FILE"
         # Also remove any empty lines left behind
-        sed -i '/^[[:space:]]*$/d; N; s/^\n$//; P; D' "$RC_FILE" 2>/dev/null || true
+        sed -i '/^[[:space:]]*$/N;/^\n$/!P;D' "$RC_FILE" 2>/dev/null || true
         echo "✔️  Removed fastfetch from $RC_FILE"
     else
         echo "ℹ️  No Lynxz Fastfetch injection found in $RC_FILE"
     fi
 else
     echo "⚠️  Shell config file not found at $RC_FILE"
+fi
+
+echo ""
+
+# -----------------------------
+# Remove Kitty Configuration
+# -----------------------------
+KITTY_CONFIG="$HOME/.config/kitty/kitty.conf"
+
+if [ -f "$KITTY_CONFIG" ]; then
+    echo "🔍 Checking Kitty configuration..."
+    
+    # Create backup before modifying
+    cp "$KITTY_CONFIG" "$KITTY_CONFIG.bak.$(date +%s)"
+    echo "💾 Backed up config to $KITTY_CONFIG.bak.*"
+    
+    # Check file size - if it's the default config from this repo, remove it entirely
+    FILE_SIZE=$(wc -c < "$KITTY_CONFIG")
+    if [ "$FILE_SIZE" -lt 2000 ]; then
+        # Likely our config file, remove it
+        rm -f "$KITTY_CONFIG"
+        echo "✔️  Removed Kitty configuration (detected as default template)"
+    else
+        echo "ℹ️  Kitty config appears to have custom settings, keeping it"
+    fi
+else
+    echo "ℹ️  Kitty config not found"
 fi
 
 echo ""
@@ -134,7 +161,8 @@ echo ""
 echo "📋 Summary:"
 echo "   ✔️  Fastfetch config removed from ~/.config/fastfetch"
 echo "   ✔️  Shell integration removed from $RC_FILE"
-echo "   $([ -d "$FONT_DIR" ] && echo "✔️  Font$(grep -q JetBrainsMono "$FONT_DIR"/* 2>/dev/null && echo " was" || echo " was not") removed" || echo "⚠️  Font directory not found")"
+echo "   ✔️  Kitty configuration cleaned up"
+echo "   ✔️  Config backups saved to *.bak.*"
 echo ""
 echo "🙏 Thank you for using Lynxz Fastfetch!"
 echo "   Feel free to reach out with feedback: https://github.com/Lynxz411/Lynxz-fastfetch"
